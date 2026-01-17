@@ -338,7 +338,7 @@
             border-radius: 5px;
         }
         
-        /* ===== NAVIGATION ===== */
+        /* ===== NAVIGATION AVEC BOUTONS AUTH ===== */
         .nav-floating {
             position: fixed;
             top: 2rem;
@@ -351,6 +351,23 @@
             z-index: 1000;
             box-shadow: var(--shadow-soft);
             border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 90%;
+            max-width: 1400px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .nav-auth {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
         }
         
         .nav-link {
@@ -384,6 +401,43 @@
             color: var(--primary);
         }
         
+        /* ===== BOUTONS AUTH ===== */
+        .btn-auth {
+            padding: 0.8rem 1.8rem;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-login {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .btn-login:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+        }
+        
+        .btn-register {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-register:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
+        }
+        
         /* ===== FOOTER ===== */
         .footer {
             background: var(--gradient-dark);
@@ -405,6 +459,16 @@
         }
         
         /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .hero-title {
+                font-size: 4rem;
+            }
+            
+            .section-title {
+                font-size: 2.8rem;
+            }
+        }
+        
         @media (max-width: 768px) {
             .hero-title {
                 font-size: 3.5rem;
@@ -417,6 +481,18 @@
             .stats-counter {
                 font-size: 3rem;
             }
+            
+            .nav-floating {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+                width: 95%;
+            }
+            
+            .nav-links, .nav-auth {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
         }
         
         @media (max-width: 480px) {
@@ -426,6 +502,11 @@
             
             section {
                 padding: 4rem 5%;
+            }
+            
+            .nav-link, .btn-auth {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
             }
         }
         
@@ -444,6 +525,34 @@
         .shadow-glow {
             box-shadow: 0 0 40px rgba(99, 102, 241, 0.2);
         }
+        
+        /* ===== STYLE POUR LES DONNÉES DYNAMIQUES ===== */
+        .real-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -451,14 +560,38 @@
     <div class="cursor"></div>
     <div class="cursor-follower"></div>
 
-    <!-- Floating Navigation -->
+    <!-- Floating Navigation avec boutons auth -->
     <nav class="nav-floating">
-        <div style="display: flex; gap: 1rem; align-items: center;">
+        <div class="nav-links">
             <a href="#hero" class="nav-link">Accueil</a>
             <a href="#design" class="nav-link">Design</a>
             <a href="#components" class="nav-link">Composants</a>
             <a href="#demo" class="nav-link">Démo</a>
             <a href="#contact" class="nav-link">Contact</a>
+        </div>
+        
+        <div class="nav-auth">
+            <!-- Vérifie si l'utilisateur est connecté -->
+            @if(Auth::check())
+                <!-- Si connecté : bouton tableau de bord -->
+                <a href="{{ route('dashboard') }}" class="btn-auth btn-register">
+                    <i class="fas fa-tachometer-alt me-2"></i>Tableau de bord
+                </a>
+                <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="btn-auth btn-login" style="cursor: pointer; border: none; font-family: inherit;">
+                        <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+                    </button>
+                </form>
+            @else
+                <!-- Si non connecté : boutons connexion/inscription -->
+                <a href="{{ route('login') }}" class="btn-auth btn-login">
+                    <i class="fas fa-sign-in-alt me-2"></i>Connexion
+                </a>
+                <a href="{{ route('register') }}" class="btn-auth btn-register">
+                    <i class="fas fa-user-plus me-2"></i>Inscription
+                </a>
+            @endif
         </div>
     </nav>
 
@@ -474,13 +607,39 @@
                 Design moderne, animations fluides et expérience utilisateur exceptionnelle.
             </p>
             <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                <button class="btn-magic">
-                    <i class="fas fa-rocket me-2"></i>Démarrer l'expérience
-                </button>
-                <button class="btn-magic" style="background: var(--dark);">
-                    <i class="fas fa-eye me-2"></i>Voir la démo
-                </button>
+                <!-- Utilisation des routes Laravel pour les boutons -->
+                <a href="{{ route('register') }}" class="btn-magic" style="text-decoration: none;">
+                    <i class="fas fa-rocket me-2"></i>Commencer l'aventure
+                </a>
+                <a href="{{ route('login') }}" class="btn-magic" style="background: var(--dark); text-decoration: none;">
+                    <i class="fas fa-sign-in-alt me-2"></i>Se connecter
+                </a>
             </div>
+            
+            <!-- Statistiques réelles en bas de la section hero -->
+            @isset($stats)
+            <div style="margin-top: 4rem; padding: 2rem; background: rgba(255,255,255,0.1); border-radius: var(--radius-lg); backdrop-filter: blur(10px);">
+                <h3 style="color: white; text-align: center; margin-bottom: 1.5rem; font-size: 1.5rem;">Notre bibliothèque en chiffres</h3>
+                <div class="real-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" data-count="{{ $stats['totalLivres'] }}">0</div>
+                        <div class="stat-label">Livres</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-count="{{ $stats['livresDisponibles'] }}">0</div>
+                        <div class="stat-label">Disponibles</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-count="{{ $stats['totalCategories'] }}">0</div>
+                        <div class="stat-label">Catégories</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-count="{{ $stats['totalUsers'] }}">0</div>
+                        <div class="stat-label">Membres</div>
+                    </div>
+                </div>
+            </div>
+            @endisset
         </div>
         
         <!-- Floating Elements -->
@@ -569,9 +728,9 @@
                         <p style="color: #64748b; margin-bottom: 1.5rem;">
                             Un guide complet pour créer des systèmes de design modernes et évolutifs.
                         </p>
-                        <button class="btn-magic" style="width: 100%;">
+                        <a href="{{ route('login') }}" class="btn-magic" style="width: 100%; display: block; text-decoration: none; text-align: center;">
                             <i class="fas fa-book-open me-2"></i>Lire le livre
-                        </button>
+                        </a>
                     </div>
                 </div>
                 
@@ -620,9 +779,9 @@
                 </p>
                 
                 <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;">
-                    <button class="btn-magic hover-glow">
-                        <i class="fas fa-sparkles me-2"></i>Effet Glow
-                    </button>
+                    <a href="{{ route('register') }}" class="btn-magic hover-glow" style="text-decoration: none;">
+                        <i class="fas fa-sparkles me-2"></i>Rejoindre maintenant
+                    </a>
                     <button class="btn-magic" style="background: var(--dark);" id="rotate-btn">
                         <i class="fas fa-sync-alt me-2"></i>Rotation 3D
                     </button>
@@ -658,6 +817,21 @@
                 </div>
                 
                 <div>
+                    <h4 style="margin-bottom: 1.5rem; color: white;">Liens rapides</h4>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <a href="{{ route('login') }}" style="color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s ease;">
+                            <i class="fas fa-sign-in-alt me-2"></i>Connexion
+                        </a>
+                        <a href="{{ route('register') }}" style="color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s ease;">
+                            <i class="fas fa-user-plus me-2"></i>Inscription
+                        </a>
+                        <a href="#hero" style="color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s ease;">
+                            <i class="fas fa-home me-2"></i>Accueil
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
                     <h4 style="margin-bottom: 1.5rem; color: white;">Contact</h4>
                     <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">
                         <i class="fas fa-user me-2"></i> Axel Peboro YANDOBA
@@ -672,6 +846,15 @@
                 <p style="color: rgba(255,255,255,0.5);">
                     &copy; 2024 BiblioTech. Tous droits réservés. | Design & Développement avec ❤️
                 </p>
+                <div style="margin-top: 2rem; display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;">
+                    @if(Auth::check())
+                        <a href="{{ route('dashboard') }}" style="color: rgba(255,255,255,0.7); text-decoration: none;">Tableau de bord</a>
+                    @else
+                        <a href="{{ route('login') }}" style="color: rgba(255,255,255,0.7); text-decoration: none;">Connexion</a>
+                        <a href="{{ route('register') }}" style="color: rgba(255,255,255,0.7); text-decoration: none;">Inscription</a>
+                    @endif
+                    <a href="#hero" style="color: rgba(255,255,255,0.7); text-decoration: none;">Accueil</a>
+                </div>
             </div>
         </div>
     </footer>
@@ -709,6 +892,13 @@
             }, 16);
         }
         
+        // ===== ANIMATE REAL STATS =====
+        function animateRealStats() {
+            document.querySelectorAll('.stat-number').forEach(element => {
+                animateCounter(element);
+            });
+        }
+        
         // ===== INTERACTIVE BUTTONS =====
         document.getElementById('rotate-btn').addEventListener('click', function() {
             this.style.transform = 'rotateY(180deg)';
@@ -736,6 +926,9 @@
                     if (entry.target.classList.contains('stats-counter')) {
                         animateCounter(entry.target);
                     }
+                    if (entry.target.classList.contains('stat-number')) {
+                        animateCounter(entry.target);
+                    }
                     entry.target.style.opacity = 1;
                     entry.target.style.transform = 'translateY(0)';
                 }
@@ -743,7 +936,7 @@
         }, observerOptions);
         
         // Observe elements
-        document.querySelectorAll('.stats-counter').forEach(el => {
+        document.querySelectorAll('.stats-counter, .stat-number').forEach(el => {
             el.style.opacity = 0;
             el.style.transform = 'translateY(20px)';
             el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
@@ -762,6 +955,11 @@
                 }
             `;
             document.head.appendChild(style);
+            
+            // Animer les statistiques réelles
+            @isset($stats)
+                animateRealStats();
+            @endisset
         });
         
         // ===== SMOOTH SCROLL =====

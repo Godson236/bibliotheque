@@ -25,4 +25,4 @@ Application web complète de gestion de bibliothèque numérique développée av
 
 ## 🏗️ Architecture Technique
 
-### Stack
+

@@ -57,3 +57,4 @@ public function empruntsActifs()
     return $this->hasMany(Emprunt::class)->where('statut', 'en_cours');
 }
 }
+

@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VitrineController;
+use App\Http\Controllers\LivreController;
+use App\Http\Controllers\CategorieController;
+use App\Http\Controllers\EmpruntController;
 
 // ==================== VITRINE PUBLIQUE ====================
 Route::name('vitrine.')->group(function () {
@@ -22,13 +25,14 @@ Route::name('vitrine.')->group(function () {
 });
 
 // ==================== AUTHENTIFICATION ====================
+// Ce fichier contient déjà : login, register, logout, etc.
 require __DIR__.'/auth.php';
 
 // ==================== ESPACE CONNECTÉ ====================
 Route::middleware(['auth'])->group(function () {
-    // Dashboard
+    // Dashboard - utiliser votre vue personnalisée
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        return view('dashboard'); // Votre tableau de bord personnalisé
     })->name('dashboard');
     
     // Profil utilisateur
@@ -37,13 +41,17 @@ Route::middleware(['auth'])->group(function () {
     })->name('profile');
     
     // CRUD Livres (admin seulement)
-    Route::resource('livres', 'App\Http\Controllers\LivreController')
+    Route::resource('livres', LivreController::class)
         ->middleware('can:admin');
     
     // CRUD Catégories (admin seulement)
-    Route::resource('categories', 'App\Http\Controllers\CategorieController')
+    Route::resource('categories', CategorieController::class)
         ->middleware('can:admin');
     
     // Emprunts (admin et user)
-    Route::resource('emprunts', 'App\Http\Controllers\EmpruntController');
+    Route::resource('emprunts', EmpruntController::class);
+    
+    // Route spécifique pour retourner un emprunt
+    Route::post('/emprunts/{emprunt}/retourner', [EmpruntController::class, 'retourner'])
+        ->name('emprunts.retourner');
 });
